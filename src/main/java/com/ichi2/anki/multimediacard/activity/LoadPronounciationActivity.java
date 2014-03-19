@@ -26,6 +26,7 @@ import android.content.DialogInterface.OnCancelListener;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -35,19 +36,15 @@ import android.widget.LinearLayout;
 import android.widget.Spinner;
 import android.widget.Toast;
 
+import com.google.gson.Gson;
 import com.ichi2.anki.R;
-import com.ichi2.anki.R.id;
-import com.ichi2.anki.R.layout;
-import com.ichi2.anki.R.menu;
-import com.ichi2.anki.R.string;
-import com.ichi2.anki.multimediacard.beolingus.parsing.BeolingusParser;
+import com.ichi2.anki.multimediacard.beolingus.parsing.CibaResult;
 import com.ichi2.anki.multimediacard.language.LanguageListerBeolingus;
 import com.ichi2.anki.runtimetools.TaskOperations;
 import com.ichi2.anki.web.HttpFetcher;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
-import java.util.Locale;
 
 /**
  * Activity to load pronunciation files from Beolingus.
@@ -271,60 +268,22 @@ public class LoadPronounciationActivity extends Activity implements OnCancelList
             return;
         }
 
-        // First call returned
-        // Means we get the page with the word translation,
-        // And we have to start fetching the page with pronunciation
-        if (post.getAddress().contentEquals(mTranslationAddress)) {
-            mTranslation = result;
+        CibaResult cibaresult = null;
+        try {
+        Gson gson = new Gson();
+        cibaresult = gson.fromJson(result, CibaResult.class);
+        } catch (Exception e) {
+            Log.e("pronc", e.toString());
+            cibaresult =  new CibaResult();
+        }
 
-            if (mTranslation.startsWith("FAILED")) {
-
-                failNoPronunciation();
-
-                return;
-            }
-
-            mPronunciationAddress = BeolingusParser.getPronounciationAddressFromTranslation(mTranslation, mSource);
-
-            if (mPronunciationAddress.contentEquals("no")) {
-
-                failNoPronunciation();
-
-                if (!mSource.toLowerCase(Locale.getDefault()).contentEquals(mSource)) {
-                    showToastLong(gtxt(R.string.multimedia_editor_word_search_try_lower_case));
-                }
-
-                return;
-            }
-
-            try {
-                showProgressDialog(gtxt(R.string.multimedia_editor_pron_looking_up));
-                mPostPronunciation = new BackgroundPost();
-                mPostPronunciation.setAddress(mPronunciationAddress);
-                mPostPronunciation.execute();
-            } catch (Exception e) {
-                progressDialog.dismiss();
-                showToast(gtxt(R.string.multimedia_editor_something_wrong));
-            }
-
+        if (cibaresult.getWord_name().equals("")) {
+            failNoPronunciation();
             return;
         }
 
-        // Else
-        // second call returned
-        // This is a call when pronunciation page has been fetched.
-        // We chekc if mp3 file could be downloaded and download it.
-        if (post.getAddress().contentEquals(mPronunciationAddress)) {
-            // else here = pronunciation post returned;
+            mMp3Address = cibaresult.getSymbols().get(0).getPh_am_mp3();
 
-            mPronunciationPage = result;
-
-            mMp3Address = BeolingusParser.getMp3AddressFromPronounciation(mPronunciationPage);
-
-            if (mMp3Address.contentEquals("no")) {
-                failNoPronunciation();
-                return;
-            }
 
             // Download MP3 file
             try {
@@ -336,10 +295,6 @@ public class LoadPronounciationActivity extends Activity implements OnCancelList
                 progressDialog.dismiss();
                 showToast(gtxt(R.string.multimedia_editor_something_wrong));
             }
-
-            return;
-
-        }
 
     }
 
