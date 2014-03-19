@@ -1,0 +1,31 @@
+buildscript {
+  repositories {
+    mavenCentral()
+  }
+
+  dependencies {
+    classpath 'com.android.tools.build:gradle:0.6.+'
+  }
+}
+
+apply plugin: 'android'
+
+task wrapper(type: Wrapper) {
+    gradleVersion = '1.8'
+}
+
+repositories {
+    mavenCentral()
+	mavenLocal()
+  }
+  
+dependencies {
+    compile 'com.google.android:support-v4:r7'
+    compile 'com.google.code.gson:gson:2.2.4'
+}
+
+android {
+    compileSdkVersion 17
+    buildToolsVersion "17.0.0"
+
+}
