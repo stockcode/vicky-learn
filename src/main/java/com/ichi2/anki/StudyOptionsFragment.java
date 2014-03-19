@@ -48,6 +48,7 @@ import android.widget.TextView;
 
 import com.ichi2.anim.ActivityTransitionAnimation;
 import com.ichi2.anim.ViewAnimation;
+import com.ichi2.anki.multimediacard.activity.MultimediaCardEditorActivity;
 import com.ichi2.async.DeckTask;
 import com.ichi2.async.DeckTask.TaskData;
 import com.ichi2.charts.ChartBuilder;
@@ -528,8 +529,8 @@ public class StudyOptionsFragment extends Fragment {
 
 
     private void addNote() {
-        Intent intent = new Intent(getActivity(), CardEditor.class);
-        intent.putExtra(CardEditor.EXTRA_CALLER, CardEditor.CALLER_STUDYOPTIONS);
+        Intent intent = new Intent(getActivity(), MultimediaCardEditorActivity.class);
+        //intent.putExtra(CardEditor.EXTRA_CALLER, CardEditor.CALLER_STUDYOPTIONS);
         startActivityForResult(intent, ADD_NOTE);
         animateLeft();
     }

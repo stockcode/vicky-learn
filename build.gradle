@@ -22,6 +22,7 @@ repositories {
 dependencies {
     compile 'com.google.android:support-v4:r7'
     compile 'com.google.code.gson:gson:2.2.4'
+    compile 'com.nostra13.universalimageloader:universal-image-loader:1.9.1'
 }
 
 android {

@@ -141,6 +141,9 @@
             android:name="com.ichi2.anki.Reviewer"
             android:configChanges="keyboardHidden|orientation|locale|screenSize" />
         <activity
+                android:name="com.ichi2.anki.TestActivity"
+                android:configChanges="keyboardHidden|orientation|locale|screenSize" />
+        <activity
             android:name="com.ichi2.anki.MyAccount"
             android:configChanges="keyboardHidden|orientation|locale|screenSize"
             android:label="@string/menu_my_account" />
