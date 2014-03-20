@@ -31,6 +31,7 @@
   <string name="studyoptions_new_total">新卡牌合计:</string>
   <string name="studyoptions_total_cards">全部卡牌:</string>
   <string name="studyoptions_eta">预计所需时间（分钟）：</string>
+    <string name="studyoptions_quiz">开始测试</string>
   <string name="studyoptions_start">开始复习</string>
   <string name="show_answer">显示答案</string>
   <string name="ease1_successive">重来</string>

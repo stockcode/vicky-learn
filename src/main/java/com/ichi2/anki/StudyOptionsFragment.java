@@ -130,6 +130,7 @@ public class StudyOptionsFragment extends Fragment {
      */
     private View mStudyOptionsView;
     private Button mButtonStart;
+    private Button mButtonQuiz;
     private Button mFragmentedCram;
 //    private Button mButtonUp;
 //    private Button mButtonDown;
@@ -198,6 +199,9 @@ public class StudyOptionsFragment extends Fragment {
             switch (v.getId()) {
                 case R.id.studyoptions_start:
                     openReviewer();
+                    return;
+                case R.id.studyoptions_quiz:
+                    openQuiz();
                     return;
 //                case R.id.studyoptions_limitup:
 //                    timeLimit = (mCol.getTimeLimit() / 60);
@@ -527,6 +531,14 @@ public class StudyOptionsFragment extends Fragment {
         AnkiDroidApp.getCol().startTimebox();
     }
 
+    private void openQuiz() {
+        mDontSaveOnStop = true;
+        Intent reviewer = new Intent(getActivity(), TestActivity.class);
+        startActivityForResult(reviewer, REQUEST_REVIEW);
+        animateLeft();
+        AnkiDroidApp.getCol().startTimebox();
+    }
+
 
     private void addNote() {
         Intent intent = new Intent(getActivity(), MultimediaCardEditorActivity.class);
@@ -590,6 +602,7 @@ public class StudyOptionsFragment extends Fragment {
         mTextDeckName = (TextView) mStudyOptionsView.findViewById(R.id.studyoptions_deck_name);
         mTextDeckDescription = (TextView) mStudyOptionsView.findViewById(R.id.studyoptions_deck_description);
         mButtonStart = (Button) mStudyOptionsView.findViewById(R.id.studyoptions_start);
+        mButtonQuiz = (Button) mStudyOptionsView.findViewById(R.id.studyoptions_quiz);
 //        mButtonUp = (Button) mStudyOptionsView.findViewById(R.id.studyoptions_limitup);
 //        mButtonDown = (Button) mStudyOptionsView.findViewById(R.id.studyoptions_limitdown);
 //        mToggleLimitToggle = (ToggleButton) mStudyOptionsView.findViewById(R.id.studyoptions_limittoggle);
@@ -655,6 +668,7 @@ public class StudyOptionsFragment extends Fragment {
         mDeckChart = (LinearLayout) mStudyOptionsView.findViewById(R.id.studyoptions_chart);
 
         mButtonStart.setOnClickListener(mButtonClickListener);
+        mButtonQuiz.setOnClickListener(mButtonClickListener);
 //        mButtonUp.setOnClickListener(mButtonClickListener);
 //        mButtonDown.setOnClickListener(mButtonClickListener);
 //        mToggleLimitToggle.setOnClickListener(mButtonClickListener);

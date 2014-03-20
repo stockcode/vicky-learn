@@ -174,7 +174,6 @@ public class Reviewer extends AnkiActivity {
     private static final int MENU_SEARCH = 4;
     private static final int MENU_MARK = 5;
     private static final int MENU_UNDO = 6;
-    private static final int MENU_TEST = 7;
 
     public static final int EASE_FAILED = 1;
     public static final int EASE_HARD = 2;
@@ -1218,8 +1217,6 @@ public class Reviewer extends AnkiActivity {
                 R.drawable.ic_menu_revert_disabled);
         UIUtils.addMenuItem(menu, Menu.NONE, MENU_EDIT, Menu.NONE, R.string.menu_edit_card, R.drawable.ic_menu_edit);
 
-        UIUtils.addMenuItem(menu, Menu.NONE, MENU_TEST, Menu.NONE, R.string.menu_test, R.drawable.ic_menu_edit);
-
         if (mPrefWhiteboard) {
             if (mShowWhiteboard) {
                 UIUtils.addMenuItemInActionBar(menu, Menu.NONE, MENU_WHITEBOARD, Menu.NONE, R.string.hide_whiteboard,
@@ -1414,12 +1411,6 @@ public class Reviewer extends AnkiActivity {
             case MENU_EDIT:
                 return editCard();
 
-            case MENU_TEST:
-                Intent test = new Intent(Reviewer.this, TestActivity.class);
-                setOutAnimation(true);
-                startActivityForResultWithAnimation(test, EDIT_CURRENT_CARD, ActivityTransitionAnimation.LEFT);
-                return true;
-                
             case MENU_REMOVE_BURY_CARD:
                 setNextCardAnimation(false);
                 DeckTask.launchDeckTask(DeckTask.TASK_TYPE_DISMISS_NOTE, mDismissCardHandler, new DeckTask.TaskData(

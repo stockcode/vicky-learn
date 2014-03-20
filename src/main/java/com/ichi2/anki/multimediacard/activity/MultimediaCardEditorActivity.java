@@ -264,6 +264,8 @@ public class MultimediaCardEditorActivity extends Activity {
 
     private void putExtrasAndStartEditActivity(final IField field, final int index, Intent i) {
 
+        field.setText(mNote.getField(0).getName());
+
         i.putExtra(EXTRA_FIELD_INDEX, index);
         i.putExtra(EXTRA_FIELD, field);
         i.putExtra(EXTRA_WHOLE_NOTE, mNote);
