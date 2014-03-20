@@ -61,7 +61,11 @@ public class TestActivity extends AnkiActivity {
                 if (mCurrentURL.equals(imageUrls.get(position))){
                     Toast.makeText(parent.getContext(), "bingo", Toast.LENGTH_SHORT).show();
                     DeckTask.launchDeckTask(DeckTask.TASK_TYPE_ANSWER_CARD, mRenderCardHandler, new DeckTask.TaskData(mSched,
-                            mCurrentCard, EASE_EASY));
+                            mCurrentCard, EASE_HARD));
+                } else {
+                    Toast.makeText(parent.getContext(), "error", Toast.LENGTH_SHORT).show();
+                    DeckTask.launchDeckTask(DeckTask.TASK_TYPE_ANSWER_CARD, mRenderCardHandler, new DeckTask.TaskData(mSched,
+                            mCurrentCard, EASE_FAILED));
                 }
             }
         });
@@ -178,7 +182,9 @@ public class TestActivity extends AnkiActivity {
             }
 
             for(HashMap<String, String> map : mCards) {
-                String imgURL = mBaseUrl + Uri.encode(map.get("sfld").replaceAll(" ", ""));
+                long cardId = Long.parseLong(map.get("id"));
+                Card card = mCol.getCard(cardId);
+                String imgURL = mBaseUrl + Uri.encode(card.getQuestion(true).split("'")[1]);
                 if (!imageUrls.contains(imgURL))    imageUrls.add(imgURL);
             }
 

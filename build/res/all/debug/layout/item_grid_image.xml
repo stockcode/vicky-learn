@@ -1,11 +1,11 @@
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
              android:layout_width="fill_parent"
-             android:layout_height="120dip">
+             android:layout_height="fill_parent">
 
     <ImageView
             android:id="@+id/image"
             android:layout_width="fill_parent"
-            android:layout_height="120dip"
+            android:layout_height="200dip"
             android:adjustViewBounds="true"
-            android:scaleType="centerCrop" />
-</FrameLayout><!-- From: file:/C:/GitHub/vicky-learn/src/main/res/layout/item_grid_image.xml -->
+            android:scaleType="fitCenter" />
+</FrameLayout><!-- From: file:/D:/git/vicky-learn/src/main/res/layout/item_grid_image.xml -->
