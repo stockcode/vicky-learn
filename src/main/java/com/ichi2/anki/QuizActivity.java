@@ -5,13 +5,15 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.text.SpannableString;
 import android.text.style.UnderlineSpan;
-import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.*;
 import com.ichi2.async.DeckTask;
 import com.ichi2.libanki.*;
 import com.ichi2.libanki.Collection;
+import com.ichi2.themes.StyledProgressDialog;
 import com.ichi2.themes.Themes;
 import com.nostra13.universalimageloader.core.ImageLoader;
 import org.json.JSONException;
@@ -21,7 +23,7 @@ import java.util.*;
 /**
  * Created by gengke on 14-3-19.
  */
-public class TestActivity extends AnkiActivity {
+public class QuizActivity extends AnkiActivity {
     private TextView mTextBarRed;
     private TextView mTextBarBlack;
     private TextView mTextBarBlue;
@@ -42,7 +44,7 @@ public class TestActivity extends AnkiActivity {
     public void onCreate(Bundle savedInstanceState) {
         Themes.applyTheme(this);
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.test);
+        setContentView(R.layout.quiz);
 
         // The hardware buttons should control the music volume while reviewing.
         setVolumeControlStream(AudioManager.STREAM_MUSIC);
@@ -82,6 +84,27 @@ public class TestActivity extends AnkiActivity {
                 null, 0));
     }
 
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.activity_quiz, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.playsound:
+                playSound();
+                return true;
+
+            case R.id.nextcard:
+                DeckTask.launchDeckTask(DeckTask.TASK_TYPE_ANSWER_CARD, mRenderCardHandler, new DeckTask.TaskData(mSched,
+                        mCurrentCard, EASE_MID));
+                return true;
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
     public class ImageAdapter extends BaseAdapter {
         @Override
         public int getCount() {
@@ -103,7 +126,7 @@ public class TestActivity extends AnkiActivity {
             final ViewHolder holder;
             View view = convertView;
             if (view == null) {
-                view = getLayoutInflater().inflate(R.layout.item_grid_image, parent, false);
+                view = getLayoutInflater().inflate(R.layout.quiz_grid_image, parent, false);
                 holder = new ViewHolder();
                 assert view != null;
                 holder.imageView = (ImageView) view.findViewById(R.id.image);
@@ -126,6 +149,7 @@ public class TestActivity extends AnkiActivity {
 
     private String mCurrentURL;
     private DeckTask.TaskListener mRenderCardHandler = new DeckTask.TaskListener() {
+        private boolean mNoMoreCards;
 
         @Override
         public void onPreExecute() {
@@ -146,14 +170,29 @@ public class TestActivity extends AnkiActivity {
 
             mCurrentCard = values[0].getCard();
 
-            Sound.resetSounds();
-            Sound.parseSounds(mBaseUrl, mCurrentCard.getAnswer(true), false, 0);
-            Sound.playSounds(0);
+            if (mCurrentCard == null) {
+                // If the card is null means that there are no more cards scheduled for review.
+                mNoMoreCards = true;
+            } else {
+                playSound();
 
-            mCurrentURL = mBaseUrl + Uri.encode(mCurrentCard.getQuestion(true).split("'")[1]);
-            imageUrls.add(mCurrentURL);
+                mCurrentURL = mBaseUrl + Uri.encode(mCurrentCard.getQuestion(true).split("'")[1]);
+                imageUrls.add(mCurrentURL);
+            }
+
+            // Since reps are incremented on fetch of next card, we will miss counting the
+            // last rep since there isn't a next card. We manually account for it here.
+            if (mNoMoreCards) {
+                mSched.setReps(mSched.getReps() + 1);
+            }
         }
     };
+
+    private void playSound() {
+        Sound.resetSounds();
+        Sound.parseSounds(mBaseUrl, mCurrentCard.getAnswer(true), false, 0);
+        Sound.playSounds(0);
+    }
 
     private DeckTask.TaskListener mGetCardsHandler = new DeckTask.TaskListener() {
         @Override

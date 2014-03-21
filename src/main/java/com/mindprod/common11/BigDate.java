@@ -745,7 +745,7 @@ public final class BigDate implements Cloneable, Serializable, Comparable<BigDat
     /**
      * Get day of week for given ordinal. It is one-based starting with Sunday.
      * 
-     * @param ordinal days since 1970-01-01 to test.
+     * @param ordinal days since 1970-01-01 to quiz.
      * @return day of week 1=Sunday 2=Monday 3=Tuesday 4=Wednesday 5=Thursday 6=Friday 7=Saturday Compatible with Sun's
      *         1=Calendar.SUNDAY Not compatible with BigDate.getDayOfWeek.
      * @see #isoDayOfWeek
@@ -782,7 +782,7 @@ public final class BigDate implements Cloneable, Serializable, Comparable<BigDat
     /**
      * Get day of week for given ordinal. Is it zero-based starting with Sunday.
      * 
-     * @param ordinal days since 1970-01-01 to test.
+     * @param ordinal days since 1970-01-01 to quiz.
      * @return day of week 0=Sunday 1=Monday 2=Tuesday 3=Wednesday 4=Thursday 5=Friday 6=Saturday WARNING: not compatible
      *         with 1=Calendar.SUNDAY
      * @see #calendarDayOfWeek
@@ -914,7 +914,7 @@ public final class BigDate implements Cloneable, Serializable, Comparable<BigDat
      * observatory. It corrects the year to 365.2425. It gets ahead 1 day every 3289 years. For BC dates, the years the
      * years 1, 5, 9 are leap years, not 4, 8, 12 as you might expect, from the general rule.
      * 
-     * @param yyyy year to test.
+     * @param yyyy year to quiz.
      * @return true if the year is a leap year.
      * @noinspection SimplifiableIfStatement
      */
@@ -993,7 +993,7 @@ public final class BigDate implements Cloneable, Serializable, Comparable<BigDat
      * Get day of week 1 to 7 for this ordinal according to the ISO standard IS-8601. It is one-based starting with
      * Monday.
      * 
-     * @param ordinal days since 1970-01-01 to test.
+     * @param ordinal days since 1970-01-01 to quiz.
      * @return day of week 1=Monday to 7=Sunday, 0 for null date. WARNING: not compatible with 1=Calendar.SUNDAY.
      * @see BigDate#dayOfWeek(int)
      */

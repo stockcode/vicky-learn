@@ -19,13 +19,10 @@ import android.app.Dialog;
 import android.content.DialogInterface;
 import android.content.DialogInterface.OnCancelListener;
 import android.content.DialogInterface.OnClickListener;
-import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.content.SharedPreferences.Editor;
 import android.content.res.Configuration;
 import android.content.res.Resources;
-import android.content.res.Resources.NotFoundException;
 import android.graphics.Color;
 import android.graphics.Paint.Align;
 import android.os.Bundle;
@@ -75,7 +72,6 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Locale;
-import java.util.Map;
 
 public class StudyOptionsFragment extends Fragment {
 
@@ -533,7 +529,7 @@ public class StudyOptionsFragment extends Fragment {
 
     private void openQuiz() {
         mDontSaveOnStop = true;
-        Intent reviewer = new Intent(getActivity(), TestActivity.class);
+        Intent reviewer = new Intent(getActivity(), QuizActivity.class);
         startActivityForResult(reviewer, REQUEST_REVIEW);
         animateLeft();
         AnkiDroidApp.getCol().startTimebox();

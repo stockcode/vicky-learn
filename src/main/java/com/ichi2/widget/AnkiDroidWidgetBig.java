@@ -852,9 +852,9 @@
 //            //
 //            // FileOutputStream out;
 //            // try {
-//            // out = new FileOutputStream("/emmc/test.png");
+//            // out = new FileOutputStream("/emmc/quiz.png");
 //            // b.compress(Bitmap.CompressFormat.PNG, 90, out);
-//            // File f = new File("/emmc/test.png");
+//            // File f = new File("/emmc/quiz.png");
 //            // Uri uri = Uri.fromFile(f);
 //            // updateViews.setImageViewUri(R.id.widget_big_cardcontent, uri);
 //            // } catch (FileNotFoundException e) {

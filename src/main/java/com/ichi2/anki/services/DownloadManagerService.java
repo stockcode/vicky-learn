@@ -1107,7 +1107,7 @@ public class DownloadManagerService extends Service {
         }
     }
 
-    // To test when the service is alive
+    // To quiz when the service is alive
     /*
      * class RunTask implements Runnable { public void run() { // Log.i(AnkiDroidApp.TAG, "Service running..."); ++counter;
      * if(serviceHandler != null) { serviceHandler.postDelayed( this, 1000L ); } } }

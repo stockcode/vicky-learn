@@ -52,7 +52,7 @@ public class StringTools {
     // ------------------------------ CONSTANTS ------------------------------
 
     /**
-     * true if you want extra debugging output and test code
+     * true if you want extra debugging output and quiz code
      */
     private static final boolean DEBUGGING = false;
 
@@ -358,7 +358,7 @@ public class StringTools {
 
 
     /**
-     * Is this string empty? In Java 1.6 + isEmpty is build in. Sun's version being an instance method cannot test for
+     * Is this string empty? In Java 1.6 + isEmpty is build in. Sun's version being an instance method cannot quiz for
      * null.
      * 
      * @param s String to be tested for emptiness.
@@ -372,7 +372,7 @@ public class StringTools {
     /**
      * Ensure the string contains only legal characters.
      * 
-     * @param candidate string to test.
+     * @param candidate string to quiz.
      * @param legalChars characters than are legal for candidate.
      * @return true if candidate is formed only of chars from the legal set.
      */
@@ -389,7 +389,7 @@ public class StringTools {
     /**
      * Ensure the char is only one a set of legal characters.
      * 
-     * @param candidate char to test.
+     * @param candidate char to quiz.
      * @param legalChars characters than are legal for candidate.
      * @return true if candidate is one of the legallegal set.
      */

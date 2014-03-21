@@ -108,10 +108,10 @@
           android:layout_width="fill_parent"
           android:layout_height="fill_parent"
           android:gravity="center"
-          android:horizontalSpacing="10dip"
+          android:horizontalSpacing="4dip"
           android:numColumns="5"
           android:stretchMode="columnWidth"
-          android:verticalSpacing="10dip"
-          android:padding="10dip" />
+          android:verticalSpacing="4dip"
+          android:padding="4dip" />
 </FrameLayout>
 </RelativeLayout>

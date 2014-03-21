@@ -674,6 +674,7 @@ public class Reviewer extends AnkiActivity {
                 displayCardQuestion();
                 initTimer();
             }
+
             try {
                 if (mProgressDialog != null && mProgressDialog.isShowing()) {
                     mProgressDialog.dismiss();
