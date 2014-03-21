@@ -1,0 +1,14 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android" >
+
+    <item
+        android:id="@+id/playsound"
+        android:orderInCategory="100"
+        android:showAsAction="ifRoom|withText"
+        android:title="重听"/>
+    <item
+        android:id="@+id/nextcard"
+        android:orderInCategory="100"
+        android:showAsAction="ifRoom|withText"
+        android:title="下一个"/>
+
+</menu>
