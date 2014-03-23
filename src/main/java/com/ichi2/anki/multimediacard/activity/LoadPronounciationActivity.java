@@ -137,6 +137,7 @@ public class LoadPronounciationActivity extends Activity implements OnCancelList
 
         mStopped = false;
 
+        onLoadPronunciation(null);
     }
 
 
@@ -284,6 +285,8 @@ public class LoadPronounciationActivity extends Activity implements OnCancelList
 
             mMp3Address = cibaresult.getSymbols().get(0).getPh_am_mp3();
 
+        if (mMp3Address.equals("")) mMp3Address = cibaresult.getSymbols().get(0).getPh_en_mp3();
+        if (mMp3Address.equals("")) mMp3Address = cibaresult.getSymbols().get(0).getPh_tts_mp3();
 
             // Download MP3 file
             try {

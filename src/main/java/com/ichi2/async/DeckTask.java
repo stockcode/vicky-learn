@@ -424,7 +424,7 @@ public class DeckTask extends BaseAsyncTask<DeckTask.TaskData, DeckTask.TaskData
             AnkiDb ankiDB = sched.getCol().getDb();
             ankiDB.getDatabase().beginTransaction();
             try {
-                if (oldCard != null) {
+                if (oldCard != null && ease < 5) {
                     sched.answerCard(oldCard, ease);
                 }
                 if (newCard == null) {

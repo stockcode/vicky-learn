@@ -163,6 +163,10 @@ public class AudioView extends LinearLayout {
     }
 
 
+    public void play() {
+        mPlayPause.callOnClick();
+    }
+
     public void notifyPlay() {
         mPlayPause.update();
         mStop.update();

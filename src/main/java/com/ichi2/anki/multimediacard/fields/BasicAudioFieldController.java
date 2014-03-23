@@ -82,6 +82,8 @@ public class BasicAudioFieldController extends FieldControllerBase implements IF
             }
         });
         layout.addView(audioView, LinearLayout.LayoutParams.FILL_PARENT);
+
+        audioView.play();
     }
 
 

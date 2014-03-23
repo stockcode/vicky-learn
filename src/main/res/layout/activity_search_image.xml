@@ -6,19 +6,16 @@
     android:orientation="vertical"
     tools:context=".SearchImageActivity" >
 
-    <WebView
-        android:id="@+id/ImageSearchWebView"
-        android:layout_width="match_parent"
-        android:layout_weight="0.8" 
-        android:layout_height="0dip"
-        />
 
-     <Button
-            android:id="@+id/ImageSearchPick"
-            style="?android:attr/buttonStyleSmall"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="@string/multimedia_editor_imgs_pick" />
+
+    <GridView xmlns:android="http://schemas.android.com/apk/res/android"
+              android:id="@+id/gridview"
+              android:layout_width="fill_parent"
+              android:layout_weight="0.8"
+              android:layout_height="0dip"
+              android:gravity="center"
+              android:numColumns="5"
+              android:stretchMode="columnWidth"/>
     
     <LinearLayout
         android:id="@+id/ImageSearchButtonsLayout"

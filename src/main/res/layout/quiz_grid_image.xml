@@ -1,11 +1,6 @@
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-             android:layout_width="fill_parent"
-             android:layout_height="120dip">
-
-    <ImageView
+    <ImageView xmlns:android="http://schemas.android.com/apk/res/android"
             android:id="@+id/image"
             android:layout_width="fill_parent"
-            android:layout_height="120dip"
+            android:layout_height="400dip"
             android:adjustViewBounds="true"
-            android:scaleType="centerCrop" />
-</FrameLayout>
+            android:scaleType="centerInside" />

@@ -166,6 +166,8 @@ public class AnkiDroidApp extends Application {
         }
 
         DisplayImageOptions defaultOptions = new DisplayImageOptions.Builder()
+                .showImageOnLoading(R.drawable.loading)
+                .showImageOnFail(R.drawable.error)
                 .cacheInMemory(true)
                 .cacheOnDisc(true)
                 .bitmapConfig(Bitmap.Config.RGB_565)

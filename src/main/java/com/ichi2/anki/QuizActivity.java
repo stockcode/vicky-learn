@@ -39,6 +39,7 @@ public class QuizActivity extends AnkiActivity {
     public static final int EASE_HARD = 2;
     public static final int EASE_MID = 3;
     public static final int EASE_EASY = 4;
+    public static final int EASE_SKIP = 5;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -99,7 +100,7 @@ public class QuizActivity extends AnkiActivity {
 
             case R.id.nextcard:
                 DeckTask.launchDeckTask(DeckTask.TASK_TYPE_ANSWER_CARD, mRenderCardHandler, new DeckTask.TaskData(mSched,
-                        mCurrentCard, EASE_MID));
+                        mCurrentCard, EASE_SKIP));
                 return true;
         }
         return super.onOptionsItemSelected(item);
@@ -158,6 +159,18 @@ public class QuizActivity extends AnkiActivity {
 
         @Override
         public void onPostExecute(DeckTask.TaskData result) {
+            if (!result.getBoolean()) {
+                // RuntimeException occured on answering cards
+                closeQuiz(DeckPicker.RESULT_DB_ERROR, false);
+                return;
+            }
+            // Check for no more cards before session complete. If they are both true, no more cards will take
+            // precedence when returning to study options.
+            if (mNoMoreCards) {
+                closeQuiz(Reviewer.RESULT_NO_MORE_CARDS, true);
+                return;
+            }
+
             DeckTask.launchDeckTask(DeckTask.TASK_TYPE_SEARCH_CARDS, mGetCardsHandler, new DeckTask.TaskData(
                     new Object[] { mCol, new HashMap<String, String>(), "", "" }));
         }
@@ -167,6 +180,7 @@ public class QuizActivity extends AnkiActivity {
             updateForNewCard();
 
             imageUrls.clear();
+            mAdapter.notifyDataSetChanged();
 
             mCurrentCard = values[0].getCard();
 
@@ -187,6 +201,12 @@ public class QuizActivity extends AnkiActivity {
             }
         }
     };
+
+    private void closeQuiz(int result, boolean b) {
+
+        QuizActivity.this.setResult(result);
+        finish();
+    }
 
     private void playSound() {
         Sound.resetSounds();
@@ -228,6 +248,18 @@ public class QuizActivity extends AnkiActivity {
             }
 
             Collections.shuffle(imageUrls);
+
+            if (imageUrls.size() > 10) {
+                int rid = 0;
+                int lid = imageUrls.indexOf(mCurrentURL);
+                while (rid == lid) {
+                    rid = rd.nextInt(10);
+                }
+
+                imageUrls.remove(rid);
+            }
+
+
 
             mAdapter.notifyDataSetChanged();
         }

@@ -293,6 +293,8 @@ public class EditFieldActivity extends FragmentActivity {
     public void handleFieldChanged(IField newField) {
         mField = newField;
         recreateEditingUi();
+
+        done();
     }
 
 

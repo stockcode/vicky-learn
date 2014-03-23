@@ -31,10 +31,10 @@ import android.util.DisplayMetrics;
 import android.view.Menu;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.view.ViewGroup;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
-import android.widget.Button;
-import android.widget.Toast;
+import android.widget.*;
 
 import com.google.gson.Gson;
 import com.ichi2.anki.R;
@@ -44,6 +44,9 @@ import com.ichi2.anki.multimediacard.googleimagesearch.json.ResponseData;
 import com.ichi2.anki.multimediacard.googleimagesearch.json.Result;
 import com.ichi2.anki.web.HttpFetcher;
 import com.ichi2.anki.web.UrlTools;
+import com.ichi2.async.DeckTask;
+import com.nostra13.universalimageloader.core.ImageLoader;
+import com.nostra13.universalimageloader.core.assist.SimpleImageLoadingListener;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
@@ -61,13 +64,14 @@ public class SearchImageActivity extends Activity implements DialogInterface.OnC
     public static final String EXTRA_SOURCE = "search.image.activity.extra.source";
     // Passed out as a result
     public static String EXTRA_IMAGE_FILE_PATH = "com.ichi2.anki.search.image.activity.extra.image.file.path";
-
+    private GridView listView;
+    private ImageAdapter mAdapter = new ImageAdapter();
     private String mSource;
-    private WebView mWebView = null;
     private Button mPrevButton;
     private Button mNextButton;
     private ProgressDialog progressDialog;
-    private ArrayList<String> mImages;
+    private ArrayList<String> mImages = new ArrayList<String>();
+    private ArrayList<String> mOrgImages = new ArrayList<String>();
     private int mCurrentImage;
     private String mTemplate = null;
     private Button mPickButton;
@@ -80,17 +84,6 @@ public class SearchImageActivity extends Activity implements DialogInterface.OnC
 
         outState.putBoolean(BUNDLE_KEY_SHUT_OFF, true);
 
-    }
-
-
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-
-        if (mWebView != null) {
-            // Saving memory
-            mWebView.clearCache(true);
-        }
     }
 
 
@@ -121,33 +114,16 @@ public class SearchImageActivity extends Activity implements DialogInterface.OnC
             mSource = "";
         }
 
-        // If translation fails this is a default - source will be returned.
-
-        mWebView = (WebView) findViewById(R.id.ImageSearchWebView);
-        mWebView.setWebViewClient(new WebViewClient() {
+        listView = (GridView) findViewById(R.id.gridview);
+        ((GridView) listView).setAdapter(mAdapter);
+        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
-            public void onPageFinished(WebView view, String url) {
-                super.onPageFinished(view, url);
-                processPageLoadFinished();
-            }
-
-
-            @Override
-            public void onPageStarted(WebView view, String url, Bitmap favicon) {
-                super.onPageStarted(view, url, favicon);
-                processPageLoadStarted();
-            }
-
-        });
-
-        mPickButton = (Button) findViewById(R.id.ImageSearchPick);
-        mPickButton.setEnabled(false);
-        mPickButton.setOnClickListener(new OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                pickImage();
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                pickImage(position);
             }
         });
+
+
 
         mNextButton = (Button) findViewById(R.id.ImageSearchNext);
 
@@ -206,8 +182,8 @@ public class SearchImageActivity extends Activity implements DialogInterface.OnC
     }
 
 
-    protected void pickImage() {
-        String imageUrl = mImages.get(mCurrentImage);
+    protected void pickImage(int currentImage) {
+        String imageUrl = mOrgImages.get(currentImage);
 
         // And here it is possible to download it... so on,
         // then return file path.
@@ -241,38 +217,6 @@ public class SearchImageActivity extends Activity implements DialogInterface.OnC
     }
 
 
-    protected void processPageLoadStarted() {
-        mPickButton.setEnabled(false);
-        progressDialog = ProgressDialog.show(this, getText(R.string.multimedia_editor_progress_wait_title),
-                gtxt(R.string.multimedia_editor_imgs_loading_image), true, false);
-
-        progressDialog.setCancelable(true);
-    }
-
-
-    protected void processPageLoadFinished() {
-        dismissCarefullyProgressDialog();
-        mPickButton.setEnabled(true);
-    }
-
-
-    public String getLocalIpAddress() {
-        try {
-            for (Enumeration<NetworkInterface> en = NetworkInterface.getNetworkInterfaces(); en.hasMoreElements();) {
-                NetworkInterface intf = en.nextElement();
-                for (Enumeration<InetAddress> enumIpAddr = intf.getInetAddresses(); enumIpAddr.hasMoreElements();) {
-                    InetAddress inetAddress = enumIpAddr.nextElement();
-                    if (!inetAddress.isLoopbackAddress()) {
-                        return inetAddress.getHostAddress().toString();
-                    }
-                }
-            }
-        } catch (Exception ex) {
-            return "";
-        }
-        return "";
-    }
-
     private class BackgroundPost extends AsyncTask<Void, Void, ImageSearchResponse> {
 
         private String mQuery;
@@ -281,10 +225,9 @@ public class SearchImageActivity extends Activity implements DialogInterface.OnC
         @Override
         protected ImageSearchResponse doInBackground(Void... params) {
             try {
-                String ip = getLocalIpAddress();
 
-                URL url = new URL("http://image.baidu.com/i?tn=baiduimagejson&word=Q&rn=50&pn=0"
-                        .replaceAll("Q", getQuery()));
+                URL url = new URL("http://image.baidu.com/i?tn=baiduimagejson&word=Q&rn=20&pn=N"
+                        .replaceAll("Q", getQuery()).replaceAll("N", mCurrentImage*20 + ""));
                 URLConnection connection = url.openConnection();
                 connection.addRequestProperty("Referer", "anki.ichi2.com");
 
@@ -348,7 +291,7 @@ public class SearchImageActivity extends Activity implements DialogInterface.OnC
 
 
     public void postFinished(ImageSearchResponse response) {
-
+        mOrgImages.clear();
         ArrayList<String> theImages = new ArrayList<String>();
 
         // No loop, just a good construct to break out from
@@ -371,10 +314,11 @@ public class SearchImageActivity extends Activity implements DialogInterface.OnC
                     continue;
                 }
 
-                String url = result.getObjURL();
+                String url = result.getThumbURL();
 
                 if (url != null) {
                     theImages.add(url);
+                    mOrgImages.add(result.getObjURL());
                 }
             }
 
@@ -395,11 +339,10 @@ public class SearchImageActivity extends Activity implements DialogInterface.OnC
         showToast(gtxt(R.string.multimedia_editor_imgs_images_found));
         dismissCarefullyProgressDialog();
 
-        mImages = theImages;
-        mCurrentImage = 0;
+        mImages.clear();
+        mImages.addAll(theImages);
 
-        showCurrentImage();
-
+        mAdapter.notifyDataSetChanged();
     }
 
 
@@ -416,12 +359,9 @@ public class SearchImageActivity extends Activity implements DialogInterface.OnC
             mNextButton.setEnabled(mCurrentImage < mImages.size() - 1);
         }
 
-        String source = makeImageCodeTemplate();
-
-        source = source.replaceAll("URL", mImages.get(mCurrentImage));
-
-        mWebView.loadData(source, "text/html", null);
-
+        BackgroundPost p = new BackgroundPost();
+        p.setQuery(mSource);
+        p.execute();
     }
 
 
@@ -473,36 +413,6 @@ public class SearchImageActivity extends Activity implements DialogInterface.OnC
         return true;
     }
 
-
-    private String makeImageCodeTemplate() {
-        if (mTemplate != null) {
-            return mTemplate;
-        }
-
-        String source = "<html><body><center>" + gtxt(R.string.multimedia_editor_imgs_pow_by_google)
-                + "</center><br /><center><img width=\"WIDTH\" src=\"URL\" /> </center></body></html>";
-
-        int currentapiVersion = android.os.Build.VERSION.SDK_INT;
-        if (currentapiVersion <= android.os.Build.VERSION_CODES.HONEYCOMB_MR2) {
-            DisplayMetrics metrics = new DisplayMetrics();
-            getWindowManager().getDefaultDisplay().getMetrics(metrics);
-
-            int height = metrics.heightPixels;
-            int width = metrics.widthPixels;
-
-            int min = Math.min(height, width);
-
-            source = source.replaceAll("WIDTH", (int) Math.round(min * 0.85) + "");
-        } else {
-            source = source.replaceAll("WIDTH", "80%");
-        }
-
-        mTemplate = source;
-
-        return source;
-    }
-
-
     @Override
     public void onCancel(DialogInterface dialog) {
         // nothing
@@ -513,4 +423,44 @@ public class SearchImageActivity extends Activity implements DialogInterface.OnC
         return getText(id).toString();
     }
 
+    public class ImageAdapter extends BaseAdapter {
+        @Override
+        public int getCount() {
+            return mImages.size();
+        }
+
+        @Override
+        public Object getItem(int position) {
+            return null;
+        }
+
+        @Override
+        public long getItemId(int position) {
+            return position;
+        }
+
+        @Override
+        public View getView(int position, View convertView, ViewGroup parent) {
+            final ViewHolder holder;
+            View view = convertView;
+            if (view == null) {
+                view = getLayoutInflater().inflate(R.layout.quiz_grid_image, parent, false);
+                holder = new ViewHolder();
+                assert view != null;
+                holder.imageView = (ImageView) view.findViewById(R.id.image);
+                view.setTag(holder);
+            } else {
+                holder = (ViewHolder) view.getTag();
+            }
+
+            ImageLoader.getInstance().displayImage(mImages.get(position), holder.imageView);
+
+            return view;
+        }
+
+        class ViewHolder {
+            ImageView imageView;
+        }
+    }
 }
+
