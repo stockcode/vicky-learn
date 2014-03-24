@@ -780,6 +780,10 @@ public class Collection {
         return mDb.queryScalar("SELECT 1 FROM cards LIMIT 1", false) == 0;
     }
 
+    public boolean hasNote(String word) {
+        return mDb.queryScalar("select 1 FROM notes WHERE data ='" + word + "'", false) != 0;
+    }
+
 
     public int cardCount() {
         return mDb.queryScalar("SELECT count() FROM cards");

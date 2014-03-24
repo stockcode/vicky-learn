@@ -18,8 +18,12 @@ package com.ichi2.libanki;
 
 import java.io.File;
 import java.net.URI;
+import java.util.Arrays;
 import java.util.HashMap;
 
+import android.content.Context;
+import android.content.res.AssetFileDescriptor;
+import android.content.res.AssetManager;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.media.MediaPlayer.OnCompletionListener;
@@ -27,6 +31,7 @@ import android.net.Uri;
 import android.util.Log;
 
 import java.util.ArrayList;
+import java.util.Random;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -37,6 +42,10 @@ import com.ichi2.anki.ReadText;
  * Class used to parse, load and play sound files on AnkiDroid.
  */
 public class Sound {
+
+    private static ArrayList<String> okList = new ArrayList<String>(Arrays.asList("ok1.amr", "ok2.amr", "ok3.amr"));
+    private static ArrayList<String> errList = new ArrayList<String>(Arrays.asList("err1.amr", "err2.amr"));
+    private static Random rd = new Random();
 
     /**
      * Pattern used to identify the markers for sound files
@@ -130,6 +139,56 @@ public class Sound {
     }
 
 
+    public static void playOkSound(AssetManager assetManager, OnCompletionListener playAllListener) {
+        // Log.i(AnkiDroidApp.TAG, "Playing " + soundPath + " has listener? " + Boolean.toString(playAllListener != null));
+
+
+            if (sMediaPlayer == null)
+                sMediaPlayer = new MediaPlayer();
+            else
+                sMediaPlayer.reset();
+
+            try {
+                AssetFileDescriptor afd = assetManager.openFd(okList.get(rd.nextInt(okList.size())));
+
+                sMediaPlayer.setDataSource(afd.getFileDescriptor(), afd.getStartOffset(), afd.getLength());
+                sMediaPlayer.setVolume(AudioManager.STREAM_MUSIC, AudioManager.STREAM_MUSIC);
+                sMediaPlayer.prepare();
+                if (playAllListener != null)
+                    sMediaPlayer.setOnCompletionListener(playAllListener);
+
+                sMediaPlayer.start();
+            } catch (Exception e) {
+                releaseSound();
+            }
+
+    }
+
+    public static void playErrSound(AssetManager assetManager, OnCompletionListener playAllListener) {
+        // Log.i(AnkiDroidApp.TAG, "Playing " + soundPath + " has listener? " + Boolean.toString(playAllListener != null));
+
+
+        if (sMediaPlayer == null)
+            sMediaPlayer = new MediaPlayer();
+        else
+            sMediaPlayer.reset();
+
+        try {
+            AssetFileDescriptor afd = assetManager.openFd(errList.get(rd.nextInt(errList.size())));
+
+            sMediaPlayer.setDataSource(afd.getFileDescriptor(), afd.getStartOffset(), afd.getLength());
+            sMediaPlayer.setVolume(AudioManager.STREAM_MUSIC, AudioManager.STREAM_MUSIC);
+            sMediaPlayer.prepare();
+            if (playAllListener != null)
+                sMediaPlayer.setOnCompletionListener(playAllListener);
+
+            sMediaPlayer.start();
+        } catch (Exception e) {
+            releaseSound();
+        }
+
+    }
+
     /**
      * Plays the given sound, sets playAllListener if available on media player to start next sound
      */
@@ -167,7 +226,7 @@ public class Sound {
     /**
      * Class used to play all sounds for a given card side
      */
-    private static final class PlayAllCompletionListener implements OnCompletionListener {
+    public static class PlayAllCompletionListener implements OnCompletionListener {
 
         /**
          * Question/Answer
@@ -180,7 +239,7 @@ public class Sound {
         private int mNextToPlay = 1;
 
 
-        private PlayAllCompletionListener(int qa) {
+        public PlayAllCompletionListener(int qa) {
             mQa = qa;
         }
 

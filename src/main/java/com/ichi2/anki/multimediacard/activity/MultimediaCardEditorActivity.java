@@ -650,6 +650,7 @@ public class MultimediaCardEditorActivity extends Activity {
 
 
     private void save() {
+        mEditorNote.setmData(mNote.getField(0).getName());
         NoteService.saveMedia((MultimediaEditableNote) mNote);
         NoteService.updateJsonNoteFromMultimediaNote(mNote, mEditorNote);
 

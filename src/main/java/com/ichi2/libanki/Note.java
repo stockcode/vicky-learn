@@ -353,4 +353,11 @@ public class Note implements Cloneable {
         }
     }
 
+    public String getmData() {
+        return mData;
+    }
+
+    public void setmData(String mData) {
+        this.mData = mData;
+    }
 }

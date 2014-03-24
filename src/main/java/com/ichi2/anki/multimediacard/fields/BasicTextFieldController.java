@@ -33,6 +33,7 @@ import android.widget.LinearLayout;
 import android.widget.LinearLayout.LayoutParams;
 import android.widget.Toast;
 
+import com.ichi2.anki.AnkiDroidApp;
 import com.ichi2.anki.R;
 import com.ichi2.anki.R.string;
 import com.ichi2.anki.multimediacard.activity.LoadPronounciationActivity;
@@ -117,6 +118,11 @@ public class BasicTextFieldController extends FieldControllerBase implements IFi
 
                 if (source.length() == 0) {
                     showToast(gtxt(R.string.multimedia_editor_text_field_editing_no_text));
+                    return;
+                }
+
+                if (AnkiDroidApp.getCol().hasNote(source)) {
+                    showToast("该单词已经存在");
                     return;
                 }
 

@@ -1,6 +1,8 @@
 package com.ichi2.anki;
 
+import android.graphics.Bitmap;
 import android.media.AudioManager;
+import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.Bundle;
 import android.text.SpannableString;
@@ -16,6 +18,7 @@ import com.ichi2.libanki.Collection;
 import com.ichi2.themes.StyledProgressDialog;
 import com.ichi2.themes.Themes;
 import com.nostra13.universalimageloader.core.ImageLoader;
+import com.nostra13.universalimageloader.core.assist.SimpleImageLoadingListener;
 import org.json.JSONException;
 
 import java.util.*;
@@ -27,6 +30,10 @@ public class QuizActivity extends AnkiActivity {
     private TextView mTextBarRed;
     private TextView mTextBarBlack;
     private TextView mTextBarBlue;
+
+    private LinearLayout mProgressBars;
+    private View mSessionProgressTotalBar;
+    private View mSessionProgressBar;
 
     private GridView listView;
     private ImageAdapter mAdapter = new ImageAdapter();
@@ -41,6 +48,9 @@ public class QuizActivity extends AnkiActivity {
     public static final int EASE_EASY = 4;
     public static final int EASE_SKIP = 5;
 
+    private int mStatisticBarsMax;
+    private int mStatisticBarsHeight;
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         Themes.applyTheme(this);
@@ -54,6 +64,9 @@ public class QuizActivity extends AnkiActivity {
         mTextBarBlack = (TextView) findViewById(R.id.black_number);
         mTextBarBlue = (TextView) findViewById(R.id.blue_number);
 
+            mSessionProgressTotalBar = (View) findViewById(R.id.daily_bar);
+            mSessionProgressBar = (View) findViewById(R.id.session_progress);
+            mProgressBars = (LinearLayout) findViewById(R.id.progress_bars);
 
 
         listView = (GridView) findViewById(R.id.gridview);
@@ -62,13 +75,21 @@ public class QuizActivity extends AnkiActivity {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 if (mCurrentURL.equals(imageUrls.get(position))){
-                    Toast.makeText(parent.getContext(), "bingo", Toast.LENGTH_SHORT).show();
-                    DeckTask.launchDeckTask(DeckTask.TASK_TYPE_ANSWER_CARD, mRenderCardHandler, new DeckTask.TaskData(mSched,
-                            mCurrentCard, EASE_HARD));
+
+                    Sound.playOkSound(parent.getContext().getAssets(), new Sound.PlayAllCompletionListener(0) {
+                        public void onCompletion(MediaPlayer mp) {
+                            DeckTask.launchDeckTask(DeckTask.TASK_TYPE_ANSWER_CARD, mRenderCardHandler, new DeckTask.TaskData(mSched,
+                                    mCurrentCard, EASE_HARD));
+                        }
+                    });
+
                 } else {
-                    Toast.makeText(parent.getContext(), "error", Toast.LENGTH_SHORT).show();
-                    DeckTask.launchDeckTask(DeckTask.TASK_TYPE_ANSWER_CARD, mRenderCardHandler, new DeckTask.TaskData(mSched,
-                            mCurrentCard, EASE_FAILED));
+                    Sound.playErrSound(parent.getContext().getAssets(), new Sound.PlayAllCompletionListener(0) {
+                        public void onCompletion(MediaPlayer mp) {
+                            DeckTask.launchDeckTask(DeckTask.TASK_TYPE_ANSWER_CARD, mRenderCardHandler, new DeckTask.TaskData(mSched,
+                                    mCurrentCard, EASE_FAILED));
+                        }
+                    });
                 }
             }
         });
@@ -123,7 +144,7 @@ public class QuizActivity extends AnkiActivity {
         }
 
         @Override
-        public View getView(int position, View convertView, ViewGroup parent) {
+        public View getView(final int position, View convertView, ViewGroup parent) {
             final ViewHolder holder;
             View view = convertView;
             if (view == null) {
@@ -136,7 +157,11 @@ public class QuizActivity extends AnkiActivity {
                 holder = (ViewHolder) view.getTag();
             }
 
-            ImageLoader.getInstance().displayImage(imageUrls.get(position), holder.imageView);
+            ImageLoader.getInstance().displayImage(imageUrls.get(position), holder.imageView, new SimpleImageLoadingListener(){
+                public void onLoadingComplete(String imageUri, View view, Bitmap loadedImage) {
+                    if (position == 4) playSound();
+                }
+            });
 
             return view;
         }
@@ -188,8 +213,6 @@ public class QuizActivity extends AnkiActivity {
                 // If the card is null means that there are no more cards scheduled for review.
                 mNoMoreCards = true;
             } else {
-                playSound();
-
                 mCurrentURL = mBaseUrl + Uri.encode(mCurrentCard.getQuestion(true).split("'")[1]);
                 imageUrls.add(mCurrentURL);
             }
@@ -268,7 +291,7 @@ public class QuizActivity extends AnkiActivity {
     private void updateForNewCard() {
         updateScreenCounts();
 
-        //updateStatisticBars();
+        updateStatisticBars();
 
     }
 
@@ -313,17 +336,17 @@ public class QuizActivity extends AnkiActivity {
         mTextBarBlue.setText(revCount);
     }
 
-//    private void updateStatisticBars() {
-//        if (mStatisticBarsMax == 0) {
-//            View view = findViewById(R.id.progress_bars_back1);
-//            mStatisticBarsMax = view.getWidth();
-//            mStatisticBarsHeight = view.getHeight();
-//        }
-//        float[] progress = mSched.progressToday(null, mCurrentCard, false);
-//        Utils.updateProgressBars(mSessionProgressBar,
-//                (int) (mStatisticBarsMax * progress[0]), mStatisticBarsHeight);
-//        Utils.updateProgressBars(mSessionProgressTotalBar,
-//                (int) (mStatisticBarsMax * progress[1]), mStatisticBarsHeight);
-//    }
+    private void updateStatisticBars() {
+        if (mStatisticBarsMax == 0) {
+            View view = findViewById(R.id.progress_bars_back1);
+            mStatisticBarsMax = view.getWidth();
+            mStatisticBarsHeight = view.getHeight();
+        }
+        float[] progress = mSched.progressToday(null, mCurrentCard, false);
+        Utils.updateProgressBars(mSessionProgressBar,
+                (int) (mStatisticBarsMax * progress[0]), mStatisticBarsHeight);
+        Utils.updateProgressBars(mSessionProgressTotalBar,
+                (int) (mStatisticBarsMax * progress[1]), mStatisticBarsHeight);
+    }
 }
 
