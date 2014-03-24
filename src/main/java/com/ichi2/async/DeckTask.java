@@ -476,10 +476,10 @@ public class DeckTask extends BaseAsyncTask<DeckTask.TaskData, DeckTask.TaskData
 
             // do a safety backup if last backup is too old --> addresses
             // android's delete db bug
-            if (BackupManager.safetyBackupNeeded(collectionFile)) {
-                publishProgress(new TaskData(res.getString(R.string.backup_collection)));
-                BackupManager.performBackup(collectionFile);
-            }
+//            if (BackupManager.safetyBackupNeeded(collectionFile)) {
+//                publishProgress(new TaskData(res.getString(R.string.backup_collection)));
+//                BackupManager.performBackup(collectionFile);
+//            }
             publishProgress(new TaskData(res.getString(R.string.open_collection)));
 
             // load collection
