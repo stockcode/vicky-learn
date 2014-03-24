@@ -216,6 +216,7 @@ public class EditFieldActivity extends FragmentActivity {
         Intent resultData = new Intent();
 
         boolean bChangeToText = false;
+        String word = mField.getName();
 
         if (mField.getType() == EFieldType.IMAGE) {
             if (mField.getImagePath() == null) {
@@ -243,7 +244,7 @@ public class EditFieldActivity extends FragmentActivity {
 
         if (bChangeToText) {
             mField = new TextField();
-            mField.setText(" - ");
+            mField.setText(word);
         }
 
         resultData.putExtra(EXTRA_RESULT_FIELD, mField);

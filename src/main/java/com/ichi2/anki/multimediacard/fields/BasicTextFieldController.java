@@ -80,7 +80,6 @@ public class BasicTextFieldController extends FieldControllerBase implements IFi
         LinearLayout.LayoutParams p = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT,
                 LinearLayout.LayoutParams.WRAP_CONTENT, 1);
 
-        createCloneButton(layoutTools, p);
         createClearButton(layoutTools, p);
 
         LinearLayout layoutTools2 = new LinearLayout(mActivity);
@@ -225,83 +224,6 @@ public class BasicTextFieldController extends FieldControllerBase implements IFi
         layoutTool.addView(btnTranslate, ps);
 
         // flow continues in Start Translation with...
-
-    }
-
-
-    /**
-     * @param activity
-     * @param layoutTools This creates a button, which will call a dialog, allowing to pick from another note's fields
-     *            one, and use it's value in the current one.
-     * @param p
-     */
-    private void createCloneButton(LinearLayout layoutTools, LayoutParams p) {
-        // Makes sense only for two and more fields
-        if (mNote.getNumberOfFields() > 1) {
-            // Should be more than one text not empty fields for clone to make
-            // sense
-
-            mPossibleClones = new ArrayList<String>();
-
-            int numTextFields = 0;
-            for (int i = 0; i < mNote.getNumberOfFields(); ++i) {
-                // Sort out non text and empty fields
-                IField curField = mNote.getField(i);
-                if (curField == null) {
-                    continue;
-                }
-
-                if (curField.getType() != EFieldType.TEXT) {
-                    continue;
-                }
-
-                if (curField.getText() == null) {
-                    continue;
-                }
-
-                if (curField.getText().length() == 0) {
-                    continue;
-                }
-
-                // as well as the same field
-                if (curField.getText().contentEquals(mField.getText())) {
-                    continue;
-                }
-
-                // collect clone sources
-                mPossibleClones.add(curField.getText());
-                ++numTextFields;
-            }
-
-            // Nothing to clone from
-            if (numTextFields < 1) {
-                return;
-            }
-
-            Button btnOtherField = new Button(mActivity);
-            btnOtherField.setText(gtxt(R.string.multimedia_editor_text_field_editing_clone));
-            layoutTools.addView(btnOtherField, p);
-
-            final BasicTextFieldController controller = this;
-
-            btnOtherField.setOnClickListener(new OnClickListener() {
-
-                @Override
-                public void onClick(View v) {
-                    PickStringDialogFragment fragment = new PickStringDialogFragment();
-
-                    fragment.setChoices(mPossibleClones);
-                    fragment.setOnclickListener(controller);
-                    fragment.setTitle(gtxt(R.string.multimedia_editor_text_field_editing_clone_source));
-
-                    fragment.show(mActivity.getSupportFragmentManager(), "pick.clone");
-
-                    // flow continues in the onClick function
-
-                }
-            });
-
-        }
 
     }
 

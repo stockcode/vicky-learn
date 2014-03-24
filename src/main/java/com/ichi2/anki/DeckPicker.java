@@ -949,7 +949,7 @@ public class DeckPicker extends FragmentActivity {
         // openStudyOptions(intent.getLongExtra(EXTRA_DECK_ID, 1));
         // }
 
-        BroadcastMessages.checkForNewMessages(this);
+        //BroadcastMessages.checkForNewMessages(this);
 
         View mainView = getLayoutInflater().inflate(R.layout.deck_picker, null);
         setContentView(mainView);

@@ -54,6 +54,7 @@ import com.ichi2.libanki.Card;
 import com.ichi2.libanki.Collection;
 import com.ichi2.libanki.Note;
 import com.ichi2.themes.StyledDialog;
+import com.ichi2.themes.Themes;
 import com.ichi2.utils.BitmapUtil;
 import com.ichi2.utils.ExifUtil;
 import com.ichi2.utils.JSONNameComparator;
@@ -651,6 +652,7 @@ public class MultimediaCardEditorActivity extends Activity {
 
     private void save() {
         mEditorNote.setmData(mNote.getField(0).getName());
+        Themes.showThemedToast(MultimediaCardEditorActivity.this, mEditorNote.getmData() + " saved", false);
         NoteService.saveMedia((MultimediaEditableNote) mNote);
         NoteService.updateJsonNoteFromMultimediaNote(mNote, mEditorNote);
 

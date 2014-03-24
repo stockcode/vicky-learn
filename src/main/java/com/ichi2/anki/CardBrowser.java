@@ -294,8 +294,8 @@ public class CardBrowser extends Activity {
                 this,
                 mCards,
                 R.layout.card_item,
-                new String[] { "sfld", "deck", "flags" },
-                new int[] { R.id.card_sfld, R.id.card_deck, R.id.card_item },
+                new String[] {"word", "sfld", "deck", "flags" },
+                new int[] { R.id.card_word, R.id.card_sfld, R.id.card_deck, R.id.card_item },
                 sflRelativeFontSize,
                 sflCustomFont);
         mCardsAdapter.setViewBinder(new SimpleAdapter.ViewBinder() {
@@ -852,6 +852,7 @@ public class CardBrowser extends Activity {
 
             String sfld = note.getSFld();
             mCards.get(pos).put("sfld", sfld);
+            mCards.get(pos).put("word", c.note().getmData());
 
             if (mWholeCollection) {
                 String deckName;
