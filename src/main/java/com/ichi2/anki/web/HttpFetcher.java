@@ -135,6 +135,8 @@ public class HttpFetcher {
             String extension = UrlToFile.substring(UrlToFile.length() - 4);
 
             HttpURLConnection urlConnection = (HttpURLConnection) url.openConnection();
+            urlConnection.setConnectTimeout(10*1000);
+            urlConnection.setReadTimeout(10*1000);
             urlConnection.setRequestMethod(method);
             //urlConnection.setRequestProperty("Referer", "http://mm.taobao.com/");
             urlConnection.setRequestProperty("User-Agent", "Mozilla/5.0 ( compatible ) ");

@@ -265,7 +265,7 @@ public class MultimediaCardEditorActivity extends Activity {
 
     private void putExtrasAndStartEditActivity(final IField field, final int index, Intent i) {
 
-        field.setText(mNote.getField(0).getName());
+        field.setText(mNote.getField(0).getText());
 
         i.putExtra(EXTRA_FIELD_INDEX, index);
         i.putExtra(EXTRA_FIELD, field);
@@ -627,6 +627,8 @@ public class MultimediaCardEditorActivity extends Activity {
                     Log.e("Multimedia Editor", "Cannot create a Note");
                     throw new Exception("Could not create a not");
                 }
+
+                mNote.getField(0).setText("");
 
                 mEditorNote = new Note(mCol, currentModel);
                 mEditorNote.model().put("did", mCurrentDid);

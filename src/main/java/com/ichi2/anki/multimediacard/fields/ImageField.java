@@ -34,6 +34,7 @@ public class ImageField extends FieldBase implements IField {
     String mImagePath;
     private boolean mHasTemporaryMedia = false;
     private String mName;
+    String mText = "";
 
     private static final String PATH_REGEX = "<img.*src=[\"'](.*)[\"'].*/?>";
 
@@ -95,18 +96,6 @@ public class ImageField extends FieldBase implements IField {
 
 
     @Override
-    public String getText() {
-        return null;
-    }
-
-
-    @Override
-    public boolean setText(String text) {
-        return false;
-    }
-
-
-    @Override
     public void setHasTemporaryMedia(boolean hasTemporaryMedia) {
         mHasTemporaryMedia = hasTemporaryMedia;
     }
@@ -140,6 +129,18 @@ public class ImageField extends FieldBase implements IField {
         }
     }
 
+    @Override
+    public String getText() {
+        return mText;
+    }
+
+
+    @Override
+    public boolean setText(String text) {
+        mText = text;
+        setThisModified();
+        return true;
+    }
 
     @Override
     public void setFormattedString(String value) {

@@ -51,6 +51,8 @@ public class QuizActivity extends AnkiActivity {
     private int mStatisticBarsMax;
     private int mStatisticBarsHeight;
 
+    private int tryCount = 3;
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         Themes.applyTheme(this);
@@ -86,8 +88,13 @@ public class QuizActivity extends AnkiActivity {
                 } else {
                     Sound.playErrSound(parent.getContext().getAssets(), new Sound.PlayAllCompletionListener(0) {
                         public void onCompletion(MediaPlayer mp) {
+                            if (tryCount != 1) {
+                                tryCount--;
+                                return;
+                            }
+
                             DeckTask.launchDeckTask(DeckTask.TASK_TYPE_ANSWER_CARD, mRenderCardHandler, new DeckTask.TaskData(mSched,
-                                    mCurrentCard, EASE_FAILED));
+                                    mCurrentCard, tryCount));
                         }
                     });
                 }
@@ -184,6 +191,8 @@ public class QuizActivity extends AnkiActivity {
 
         @Override
         public void onPostExecute(DeckTask.TaskData result) {
+            tryCount = 3;
+
             if (!result.getBoolean()) {
                 // RuntimeException occured on answering cards
                 closeQuiz(DeckPicker.RESULT_DB_ERROR, false);

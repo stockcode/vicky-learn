@@ -320,7 +320,7 @@ public class LoadPronounciationActivity extends Activity implements OnCancelList
 
         progressDialog.dismiss();
 
-        showToast(gtxt(R.string.multimedia_editor_general_done));
+        //showToast(gtxt(R.string.multimedia_editor_general_done));
 
         Intent resultData = new Intent();
 

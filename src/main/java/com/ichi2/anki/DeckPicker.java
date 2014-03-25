@@ -1130,9 +1130,9 @@ public class DeckPicker extends FragmentActivity {
 
     private void addNote() {
         Intent intent = new Intent(DeckPicker.this, MultimediaCardEditorActivity.class);
-        startActivity(intent);
+        //startActivity(intent);
         //intent.putExtra(CardEditor.EXTRA_CALLER, CardEditor.CALLER_DECKPICKER);
-        //startActivityForResult(intent, ADD_NOTE);
+        startActivityForResult(intent, ADD_NOTE);
         if (AnkiDroidApp.SDK_VERSION > 4) {
             ActivityTransitionAnimation.slide(DeckPicker.this, ActivityTransitionAnimation.LEFT);
         }
@@ -2655,6 +2655,7 @@ public class DeckPicker extends FragmentActivity {
             loadCounts();
         } else if (requestCode == ADD_NOTE && resultCode != RESULT_CANCELED) {
             loadCounts();
+            addNote();
         } else if (requestCode == BROWSE_CARDS &&
                 (resultCode == Activity.RESULT_OK || resultCode == Activity.RESULT_CANCELED)) {
             loadCounts();

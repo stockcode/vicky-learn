@@ -276,6 +276,7 @@ public class BasicTextFieldController extends FieldControllerBase implements IFi
 
             ImageField imgField = new ImageField();
             imgField.setName(mEditText.getText().toString());
+            imgField.setText(mEditText.getText().toString());
             imgField.setImagePath(imgPath);
             imgField.setHasTemporaryMedia(true);
             mActivity.handleFieldChanged(imgField);

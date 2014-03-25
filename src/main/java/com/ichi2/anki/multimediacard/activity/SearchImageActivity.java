@@ -336,7 +336,7 @@ public class SearchImageActivity extends Activity implements DialogInterface.OnC
 
 
     private void proceedWithImages(ArrayList<String> theImages) {
-        showToast(gtxt(R.string.multimedia_editor_imgs_images_found));
+        //showToast(gtxt(R.string.multimedia_editor_imgs_images_found));
         dismissCarefullyProgressDialog();
 
         mImages.clear();

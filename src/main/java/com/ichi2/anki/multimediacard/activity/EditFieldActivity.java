@@ -276,6 +276,7 @@ public class EditFieldActivity extends FragmentActivity {
     protected void toTextField() {
         if (mField.getType() != EFieldType.TEXT) {
             mField = new TextField();
+            mField.setText(mNote.getField(0).getText());
             recreateEditingUi();
         }
     }
