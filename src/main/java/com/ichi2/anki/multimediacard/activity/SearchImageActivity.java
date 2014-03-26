@@ -28,6 +28,7 @@ import android.graphics.Bitmap;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.DisplayMetrics;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -45,6 +46,7 @@ import com.ichi2.anki.multimediacard.googleimagesearch.json.Result;
 import com.ichi2.anki.web.HttpFetcher;
 import com.ichi2.anki.web.UrlTools;
 import com.ichi2.async.DeckTask;
+import com.ichi2.widget.ScaleImageView;
 import com.nostra13.universalimageloader.core.ImageLoader;
 import com.nostra13.universalimageloader.core.assist.SimpleImageLoadingListener;
 
@@ -70,8 +72,8 @@ public class SearchImageActivity extends Activity implements DialogInterface.OnC
     private Button mPrevButton;
     private Button mNextButton;
     private ProgressDialog progressDialog;
-    private ArrayList<String> mImages = new ArrayList<String>();
-    private ArrayList<String> mOrgImages = new ArrayList<String>();
+
+    private List<BResult> results = new ArrayList<BResult>();
     private int mCurrentImage;
     private String mTemplate = null;
     private Button mPickButton;
@@ -183,7 +185,7 @@ public class SearchImageActivity extends Activity implements DialogInterface.OnC
 
 
     protected void pickImage(int currentImage) {
-        String imageUrl = mOrgImages.get(currentImage);
+        String imageUrl = results.get(currentImage).getObjURL();
 
         // And here it is possible to download it... so on,
         // then return file path.
@@ -291,7 +293,7 @@ public class SearchImageActivity extends Activity implements DialogInterface.OnC
 
 
     public void postFinished(ImageSearchResponse response) {
-        mOrgImages.clear();
+        results.clear();
         ArrayList<String> theImages = new ArrayList<String>();
 
         // No loop, just a good construct to break out from
@@ -304,28 +306,21 @@ public class SearchImageActivity extends Activity implements DialogInterface.OnC
 
 
 
-            List<BResult> results = response.getData();
+            List<BResult> resultList = response.getData();
 
-            if (results == null)
+            if (resultList == null)
                 break;
 
-            for (BResult result : results) {
-                if (result == null) {
-                    continue;
-                }
+            results.addAll(resultList);
 
-                String url = result.getThumbURL();
 
-                if (url != null) {
-                    theImages.add(url);
-                    mOrgImages.add(result.getObjURL());
-                }
-            }
 
-            if (theImages.size() == 0)
+            if (results.size() == 0)
                 break;
 
-            proceedWithImages(theImages);
+            dismissCarefullyProgressDialog();
+
+            mAdapter.notifyDataSetChanged();
 
             return;
 
@@ -334,29 +329,15 @@ public class SearchImageActivity extends Activity implements DialogInterface.OnC
         returnFailure(gtxt(R.string.multimedia_editor_imgs_no_results));
     }
 
-
-    private void proceedWithImages(ArrayList<String> theImages) {
-        //showToast(gtxt(R.string.multimedia_editor_imgs_images_found));
-        dismissCarefullyProgressDialog();
-
-        mImages.clear();
-        mImages.addAll(theImages);
-
-        mAdapter.notifyDataSetChanged();
-    }
-
-
     private void showCurrentImage() {
         if (mCurrentImage <= 0) {
             mCurrentImage = 0;
             mPrevButton.setEnabled(false);
-            mNextButton.setEnabled(mImages.size() > 0);
         }
 
         if (mCurrentImage > 0) {
-            mCurrentImage = Math.min(mImages.size() - 1, mCurrentImage);
+            mCurrentImage = Math.min(results.size() - 1, mCurrentImage);
             mPrevButton.setEnabled(true);
-            mNextButton.setEnabled(mCurrentImage < mImages.size() - 1);
         }
 
         BackgroundPost p = new BackgroundPost();
@@ -426,7 +407,7 @@ public class SearchImageActivity extends Activity implements DialogInterface.OnC
     public class ImageAdapter extends BaseAdapter {
         @Override
         public int getCount() {
-            return mImages.size();
+            return results.size();
         }
 
         @Override
@@ -442,24 +423,28 @@ public class SearchImageActivity extends Activity implements DialogInterface.OnC
         @Override
         public View getView(int position, View convertView, ViewGroup parent) {
             final ViewHolder holder;
-            View view = convertView;
-            if (view == null) {
-                view = getLayoutInflater().inflate(R.layout.quiz_grid_image, parent, false);
+
+            if (convertView == null) {
+                LayoutInflater layoutInflator = LayoutInflater.from(parent.getContext());
+                convertView = layoutInflator.inflate(R.layout.quiz_grid_image, null);
                 holder = new ViewHolder();
-                assert view != null;
-                holder.imageView = (ImageView) view.findViewById(R.id.image);
-                view.setTag(holder);
+                holder.imageView = (ScaleImageView) convertView.findViewById(R.id.img_thumb);
+                holder.contentView = (TextView) convertView.findViewById(R.id.img_size);
+                convertView.setTag(holder);
+
             } else {
-                holder = (ViewHolder) view.getTag();
+                holder = (ViewHolder) convertView.getTag();
             }
 
-            ImageLoader.getInstance().displayImage(mImages.get(position), holder.imageView);
+            ImageLoader.getInstance().displayImage(results.get(position).getThumbURL(), holder.imageView);
+            holder.contentView.setText(results.get(position).getFilesize() + "K");
 
-            return view;
+            return convertView;
         }
 
         class ViewHolder {
-            ImageView imageView;
+            public ScaleImageView imageView;
+            TextView contentView;
         }
     }
 }

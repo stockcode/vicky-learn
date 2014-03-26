@@ -8,16 +8,14 @@ import android.os.Bundle;
 import android.os.SystemClock;
 import android.text.SpannableString;
 import android.text.style.UnderlineSpan;
-import android.view.Menu;
-import android.view.MenuItem;
-import android.view.View;
-import android.view.ViewGroup;
+import android.view.*;
 import android.widget.*;
 import com.ichi2.async.DeckTask;
 import com.ichi2.libanki.*;
 import com.ichi2.libanki.Collection;
 import com.ichi2.themes.StyledProgressDialog;
 import com.ichi2.themes.Themes;
+import com.ichi2.widget.ScaleImageView;
 import com.nostra13.universalimageloader.core.ImageLoader;
 import com.nostra13.universalimageloader.core.assist.SimpleImageLoadingListener;
 import org.json.JSONException;
@@ -158,15 +156,17 @@ public class QuizActivity extends AnkiActivity {
         @Override
         public View getView(final int position, View convertView, ViewGroup parent) {
             final ViewHolder holder;
-            View view = convertView;
-            if (view == null) {
-                view = getLayoutInflater().inflate(R.layout.quiz_grid_image, parent, false);
+
+            if (convertView == null) {
+                LayoutInflater layoutInflator = LayoutInflater.from(parent.getContext());
+                convertView = layoutInflator.inflate(R.layout.quiz_grid_image, null);
                 holder = new ViewHolder();
-                assert view != null;
-                holder.imageView = (ImageView) view.findViewById(R.id.image);
-                view.setTag(holder);
+                holder.imageView = (ScaleImageView) convertView.findViewById(R.id.img_thumb);
+                holder.contentView = (TextView) convertView.findViewById(R.id.img_size);
+                convertView.setTag(holder);
+
             } else {
-                holder = (ViewHolder) view.getTag();
+                holder = (ViewHolder) convertView.getTag();
             }
 
             ImageLoader.getInstance().displayImage(imageUrls.get(position), holder.imageView, new SimpleImageLoadingListener(){
@@ -175,11 +175,14 @@ public class QuizActivity extends AnkiActivity {
                 }
             });
 
-            return view;
+            holder.contentView.setVisibility(View.INVISIBLE);
+
+            return convertView;
         }
 
         class ViewHolder {
-            ImageView imageView;
+            public ScaleImageView imageView;
+            TextView contentView;
         }
     }
 
