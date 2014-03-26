@@ -5,6 +5,7 @@ import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.SystemClock;
 import android.text.SpannableString;
 import android.text.style.UnderlineSpan;
 import android.view.Menu;
@@ -30,6 +31,7 @@ public class QuizActivity extends AnkiActivity {
     private TextView mTextBarRed;
     private TextView mTextBarBlack;
     private TextView mTextBarBlue;
+    private Chronometer mCardTimer;
 
     private LinearLayout mProgressBars;
     private View mSessionProgressTotalBar;
@@ -70,6 +72,7 @@ public class QuizActivity extends AnkiActivity {
             mSessionProgressBar = (View) findViewById(R.id.session_progress);
             mProgressBars = (LinearLayout) findViewById(R.id.progress_bars);
 
+        mCardTimer = (Chronometer) findViewById(R.id.card_time);
 
         listView = (GridView) findViewById(R.id.gridview);
         ((GridView) listView).setAdapter(mAdapter);
@@ -111,6 +114,8 @@ public class QuizActivity extends AnkiActivity {
         }
         DeckTask.launchDeckTask(DeckTask.TASK_TYPE_ANSWER_CARD, mRenderCardHandler, new DeckTask.TaskData(mSched,
                 null, 0));
+
+        initTimer();
     }
 
     @Override
@@ -356,6 +361,11 @@ public class QuizActivity extends AnkiActivity {
                 (int) (mStatisticBarsMax * progress[0]), mStatisticBarsHeight);
         Utils.updateProgressBars(mSessionProgressTotalBar,
                 (int) (mStatisticBarsMax * progress[1]), mStatisticBarsHeight);
+    }
+
+    private void initTimer() {
+        mCardTimer.setBase(SystemClock.elapsedRealtime());
+        mCardTimer.start();
     }
 }
 
