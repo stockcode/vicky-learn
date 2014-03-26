@@ -228,8 +228,8 @@ public class SearchImageActivity extends Activity implements DialogInterface.OnC
         protected ImageSearchResponse doInBackground(Void... params) {
             try {
 
-                URL url = new URL("http://image.baidu.com/i?tn=baiduimagejson&word=Q&rn=20&pn=N"
-                        .replaceAll("Q", getQuery()).replaceAll("N", mCurrentImage*20 + ""));
+                URL url = new URL("http://image.baidu.com/i?tn=baiduimagejson&word=Q&rn=15&pn=N"
+                        .replaceAll("Q", getQuery()).replaceAll("N", mCurrentImage*15 + ""));
                 URLConnection connection = url.openConnection();
                 connection.addRequestProperty("Referer", "anki.ichi2.com");
 
