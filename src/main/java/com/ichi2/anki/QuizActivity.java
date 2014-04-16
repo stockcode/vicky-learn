@@ -18,6 +18,7 @@ import com.ichi2.themes.Themes;
 import com.ichi2.widget.ScaleImageView;
 import com.nostra13.universalimageloader.core.ImageLoader;
 import com.nostra13.universalimageloader.core.assist.SimpleImageLoadingListener;
+import com.origamilabs.library.views.StaggeredGridView;
 import org.json.JSONException;
 
 import java.util.*;
@@ -35,7 +36,7 @@ public class QuizActivity extends AnkiActivity {
     private View mSessionProgressTotalBar;
     private View mSessionProgressBar;
 
-    private GridView listView;
+    private StaggeredGridView listView;
     private ImageAdapter mAdapter = new ImageAdapter();
     private Sched mSched;
     private String mBaseUrl;
@@ -72,11 +73,11 @@ public class QuizActivity extends AnkiActivity {
 
         mCardTimer = (Chronometer) findViewById(R.id.card_time);
 
-        listView = (GridView) findViewById(R.id.gridview);
-        ((GridView) listView).setAdapter(mAdapter);
-        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+        listView = (StaggeredGridView) findViewById(R.id.gridview);
+        listView.setAdapter(mAdapter);
+        listView.setOnItemClickListener(new StaggeredGridView.OnItemClickListener() {
             @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+            public void onItemClick(StaggeredGridView parent, View view, int position, long id) {
                 if (mCurrentURL.equals(imageUrls.get(position))){
 
                     Sound.playOkSound(parent.getContext().getAssets(), new Sound.PlayAllCompletionListener(0) {

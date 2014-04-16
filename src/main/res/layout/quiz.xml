@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                xmlns:staggered="http://schemas.android.com/apk/res-auto"
                 android:id="@+id/quiz_main_layout"
                 android:layout_width="fill_parent"
                 android:layout_height="fill_parent"
@@ -102,15 +103,11 @@
                  android:layout_below="@+id/top_bar"
                  android:layout_width="fill_parent"
                  android:layout_height="fill_parent">
-<GridView xmlns:android="http://schemas.android.com/apk/res/android"
-          android:id="@+id/gridview"
-          android:layout_width="fill_parent"
-          android:layout_height="fill_parent"
-          android:gravity="center"
-          android:horizontalSpacing="4dip"
-          android:numColumns="5"
-          android:stretchMode="columnWidth"
-          android:verticalSpacing="4dip"
-          android:padding="4dip" />
+        <com.origamilabs.library.views.StaggeredGridView
+                android:id="@+id/gridview"
+                staggered:numColumns="5"
+                staggered:drawSelectorOnTop="true"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
 </FrameLayout>
 </RelativeLayout>

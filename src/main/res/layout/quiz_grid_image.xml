@@ -7,14 +7,15 @@
 
     <com.ichi2.widget.ScaleImageView
         android:id="@+id/img_thumb"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_width="350px"
+        android:layout_height="450px"
+        android:layout_centerHorizontal="true"
         android:scaleType="centerInside" />
 
     <TextView
         android:id="@+id/img_size"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_height="10dip"
         android:singleLine="false"
         android:textColor="#656565" />
 </LinearLayout>

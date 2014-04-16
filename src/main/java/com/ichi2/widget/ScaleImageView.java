@@ -24,7 +24,7 @@ import android.widget.RelativeLayout;
  */
 public class ScaleImageView extends ImageView {
     private ImageChangeListener imageChangeListener;
-    private boolean scaleToWidth = false; // this flag determines if should measure height manually dependent of width
+    private boolean scaleToWidth = true; // this flag determines if should measure height manually dependent of width
 
     public ScaleImageView(Context context) {
         super(context);

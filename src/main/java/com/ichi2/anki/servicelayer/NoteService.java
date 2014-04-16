@@ -88,6 +88,8 @@ public class NoteService {
                     field = new TextField();
                 }
                 field.setFormattedString(value);
+                field.setName(editorNoteSrc.getmData());
+                field.setText(editorNoteSrc.getmData());
                 mmNote.setField(i, field);
             }
             mmNote.setModelId(editorNoteSrc.getMid());

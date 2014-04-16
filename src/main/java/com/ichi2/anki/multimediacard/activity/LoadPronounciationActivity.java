@@ -158,17 +158,27 @@ public class LoadPronounciationActivity extends Activity implements OnCancelList
 
         showProgressDialog(message);
 
-        mTranslationAddress = computeAddressOfTranslationPage();
-
         try {
-            mPostTranslation = new BackgroundPost();
-            mPostTranslation.setAddress(mTranslationAddress);
-            // post.setStopper(PRONUNC_STOPPER);
-            mPostTranslation.execute();
+            showProgressDialog(gtxt(R.string.multimedia_editor_general_downloading));
+            mDownloadMp3Task = new DownloadFileTask();
+            mDownloadMp3Task.setAddress(computeAddressOfTranslationPage());
+            mDownloadMp3Task.execute();
         } catch (Exception e) {
             progressDialog.dismiss();
             showToast(gtxt(R.string.multimedia_editor_something_wrong));
         }
+
+//        mTranslationAddress = computeAddressOfTranslationPage();
+//
+//        try {
+//            mPostTranslation = new BackgroundPost();
+//            mPostTranslation.setAddress(mTranslationAddress);
+//            // post.setStopper(PRONUNC_STOPPER);
+//            mPostTranslation.execute();
+//        } catch (Exception e) {
+//            progressDialog.dismiss();
+//            showToast(gtxt(R.string.multimedia_editor_something_wrong));
+//        }
     }
 
 
@@ -362,7 +372,7 @@ public class LoadPronounciationActivity extends Activity implements OnCancelList
 
     private String computeAddressOfTranslationPage() {
         // Service name has to be replaced from the language lister.
-        String address = "http://dict-co.iciba.com/api/dictionary.php?w=Q&key=1ED8B4F587F26124619E525135CA2896&type=json";
+        String address = "http://dict.youdao.com/dictvoice?audio=Q";
 
         String strFrom = mSpinnerFrom.getSelectedItem().toString();
         String langCodeFrom = mLanguageLister.getCodeFor(strFrom);
