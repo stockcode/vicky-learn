@@ -87,7 +87,7 @@
 <string name ="multimedia_editor_text_field_editing_say">Say</string>
 <string name ="multimedia_editor_text_field_editing_clear">Clear</string>
 <string name ="multimedia_editor_text_field_editing_clone">Clone</string>
-<string name ="multimedia_editor_text_field_editing_translate">Dictionary</string>
+<string name ="multimedia_editor_text_field_editing_translate">Gallery</string>
 <!-- message to user, when there is no text or many words, but the user tries something -->
 <string name ="multimedia_editor_text_field_editing_no_text">Input some text first</string>
 <string name ="multimedia_editor_text_field_editing_many_words">Dictionary usually expects one word</string>

@@ -24,6 +24,9 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.database.Cursor;
+import android.net.Uri;
+import android.provider.MediaStore;
 import android.view.Gravity;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -59,6 +62,7 @@ public class BasicTextFieldController extends FieldControllerBase implements IFi
     private static final int REQUEST_CODE_PRONOUNCIATION = 102;
     private static final int REQUEST_CODE_TRANSLATE_COLORDICT = 103;
     private static final int REQUEST_CODE_IMAGE_SEARCH = 104;
+    protected static final int ACTIVITY_SELECT_IMAGE = 105;
 
     private EditText mEditText;
 
@@ -191,33 +195,36 @@ public class BasicTextFieldController extends FieldControllerBase implements IFi
                     return;
                 }
 
-                if (source.contains(" ")) {
-                    showToast(gtxt(R.string.multimedia_editor_text_field_editing_many_words));
-                }
-
-                // Pick from two translation sources
-                PickStringDialogFragment fragment = new PickStringDialogFragment();
-
-                ArrayList<String> translationSources = new ArrayList<String>();
-                translationSources.add("Glosbe.com");
-                translationSources.add("ColorDict");
-
-                fragment.setChoices(translationSources);
-                fragment.setOnclickListener(new DialogInterface.OnClickListener() {
-
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        if (which == 0) {
-                            startTranslationWithGlosbe();
-                        } else if (which == 1) {
-                            startTranslationWithColorDict();
-                        }
-                    }
-                });
-
-                fragment.setTitle(gtxt(R.string.multimedia_editor_trans_pick_translation_source));
-
-                fragment.show(mActivity.getSupportFragmentManager(), "pick.translation.source");
+                Intent i = new Intent(Intent.ACTION_PICK, android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+                mActivity.startActivityForResult(i, ACTIVITY_SELECT_IMAGE);
+                
+//                if (source.contains(" ")) {
+//                    showToast(gtxt(R.string.multimedia_editor_text_field_editing_many_words));
+//                }
+//
+//                // Pick from two translation sources
+//                PickStringDialogFragment fragment = new PickStringDialogFragment();
+//
+//                ArrayList<String> translationSources = new ArrayList<String>();
+//                translationSources.add("Glosbe.com");
+//                translationSources.add("ColorDict");
+//
+//                fragment.setChoices(translationSources);
+//                fragment.setOnclickListener(new DialogInterface.OnClickListener() {
+//
+//                    @Override
+//                    public void onClick(DialogInterface dialog, int which) {
+//                        if (which == 0) {
+//                            startTranslationWithGlosbe();
+//                        } else if (which == 1) {
+//                            startTranslationWithColorDict();
+//                        }
+//                    }
+//                });
+//
+//                fragment.setTitle(gtxt(R.string.multimedia_editor_trans_pick_translation_source));
+//
+//                fragment.show(mActivity.getSupportFragmentManager(), "pick.translation.source");
             }
         });
 
@@ -273,6 +280,23 @@ public class BasicTextFieldController extends FieldControllerBase implements IFi
             if (!f.exists()) {
                 showToast(gtxt(R.string.multimedia_editor_imgs_failed));
             }
+
+            ImageField imgField = new ImageField();
+            imgField.setName(mEditText.getText().toString());
+            imgField.setText(mEditText.getText().toString());
+            imgField.setImagePath(imgPath);
+            imgField.setHasTemporaryMedia(true);
+            mActivity.handleFieldChanged(imgField);
+        }else if (requestCode == ACTIVITY_SELECT_IMAGE && resultCode == Activity.RESULT_OK) {
+            Uri selectedImage = data.getData();
+            // // Log.d(TAG, selectedImage.toString());
+            String[] filePathColumn = { MediaStore.Images.Media.DATA };
+
+            Cursor cursor = mActivity.getContentResolver().query(selectedImage, filePathColumn, null, null, null);
+            cursor.moveToFirst();
+
+            int columnIndex = cursor.getColumnIndex(filePathColumn[0]);
+            String imgPath = cursor.getString(columnIndex);
 
             ImageField imgField = new ImageField();
             imgField.setName(mEditText.getText().toString());
@@ -354,9 +378,11 @@ public class BasicTextFieldController extends FieldControllerBase implements IFi
     protected void startTranslationWithGlosbe() {
         String source = mEditText.getText().toString();
 
-        Intent intent = new Intent(mActivity, TranslationActivity.class);
-        intent.putExtra(TranslationActivity.EXTRA_SOURCE, source);
-        mActivity.startActivityForResult(intent, REQUEST_CODE_TRANSLATE_GLOSBE);
+//        Intent intent = new Intent(mActivity, TranslationActivity.class);
+//        intent.putExtra(TranslationActivity.EXTRA_SOURCE, source);
+//        mActivity.startActivityForResult(intent, REQUEST_CODE_TRANSLATE_GLOSBE);
+        Intent i = new Intent(Intent.ACTION_PICK, android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+        mActivity.startActivityForResult(i, ACTIVITY_SELECT_IMAGE);
     }
 
 
